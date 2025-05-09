@@ -1,4 +1,4 @@
-﻿namespace BancoGame;
+namespace BancoGame;
 
 class BancoGame
 {
@@ -26,9 +26,10 @@ class BancoGame
         };
         
         var drawnNumbers = new HashSet<int>(); //stores unique values of the drawn numbers
+        bool gameOver = false; 
         
         
-        while (true)
+        while (!gameOver)
         {
             Console.WriteLine("Enter a draw number and press ENTER: ");
             var input = Console.ReadLine();
@@ -84,39 +85,57 @@ class BancoGame
                     Console.WriteLine();
             }
 
+                
             
                                                         //---------ChekWin-----------
-            bool someOneWon = false;
 
             foreach (var pair in board)
             {
+                int winCount = 0; //hvor mange rækker er vundet
+                
                 foreach (var row in pair.Value)
                 {
                     if (row.All(n => drawnNumbers.Contains(n)))
                     {
-                        Console.WriteLine($"{pair.Key} - You won!");
-                        
-                        foreach (var num in row)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.Write($"[{num}] ");
-                        }
-                        Console.ResetColor();
-                        Console.WriteLine();
-                        
-                        someOneWon = true;
-                        break;
+                        winCount++;
                     }
                 }
-                if(someOneWon) break;
+                
+                if (winCount > 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    
+                    if (winCount == 1)
+                        Console.WriteLine($"{pair.Key} won!");
+                    else if(winCount == 2)
+                        Console.WriteLine($"{pair.Key} won a two rows");
+                    else if(winCount == 3)
+                        Console.WriteLine($"{pair.Key} won a all rows!");
+                    
+                    foreach (var row in pair.Value)
+                    {
+                        if (row.All(n => drawnNumbers.Contains(n)))
+                        {
+                            foreach (var num in row)
+                            {
+                                Console.Write($"[{num}] ");
+                            }
+                            Console.WriteLine();
+                        }
+                    }
+                    Console.ResetColor();
+                    
+                    
+                    if (winCount == 3)
+                    {
+                        Console.WriteLine($"Game over! {pair.Key} You win!");
+                       gameOver = true;
+                       break;
+                    }
+                    
+                }
+               
             }
-
-            if (someOneWon)
-            {
-                Console.WriteLine("Hej-Hej. Vi ses...");
-                break;
-            }
-            
             
         }//end while
     }
